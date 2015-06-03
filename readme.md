@@ -1,18 +1,13 @@
-=== Export Post to CSV ===
-Contributors: cogdog
-Tags: posts, exports, csv 
-Requires at least: 3.9
-Tested up to: 4.1
-Stable tag: 0.1
-License: GPLv2
+# Export Posts to CSV
 
 Export data for all posts or a category of posts in CSV format with including author name, author user name, publication date, URL (local or remote if syndicated, identification of Feed Wordpress syndicated posts, character count, word count, and link count, and list of outward hypertext link
 
-== Description ==
+## Description
 Get blog data in a data format for use elsewhere. This plugin was written originally for use on sites that aggregate external posts with the [Feed Wordpress plugin](https://wordpress.org/plugins/feedwordpress/), but will equally return data on locally published posts (or mixes thereof)
 
+This plugin adds a *Post CSV Export* submenu item to the Tools menu. The tool generates an export of blog data in CSV format, for either the entire site, or within a selected category. 
 
-This plugin adds a *Post CSV Export* submenu item to the Tools menu. The tool generates an export of blog data in CSV format, for either the entire site, or within a selected category. The data so far being exported for each post includes:
+The data so far being exported for each post includes:
 
 * post ID
 * source (either 'local' or 'syndicated')
@@ -28,11 +23,11 @@ This plugin adds a *Post CSV Export* submenu item to the Tools menu. The tool ge
 
 
 
-= Please Note =
+## Please Note
 This is my first real plugin!
 
 
-== Installation ==
+## Installation
 
 1. Upload `posts2csv` folder to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in WordPress
@@ -40,20 +35,20 @@ This is my first real plugin!
 4. Save .csv value
 5. Enjoy
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions
 
-= Huh? =
+### Huh?
 
 ok
 
 
-== Screenshots ==
+## Screenshots
  
 one day 
 
-== Changelog ==
+## Changelog
 
-= 0.1 =
+### 0.1 
 * Just got it working!
 
 
