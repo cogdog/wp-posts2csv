@@ -13,13 +13,13 @@ The data so far being exported for each post includes:
 * source (either 'local' or 'syndicated')
 * post title
 * publication date and time
-* author name (first and last name form profile)
+* author name (first and last name from profile)
 * author username
 * blogname (host blog or remote if syndicated post)
 * post character count (string character count after HTML stripped out)
 * post word count (after HTML stripped out)
-* number of links in post (count of '</a>' tags)
-* list of hyperlink urls (from all href= tags)
+* number of links in post (count of `&lt;/a&gt;` tags)
+* list of hyperlink urls (from all `&lt;a href=&gt;...&lt;\&gt;` tags)
 * number of tags
 * list of tags
 * number of comments (if it is a locally published post, syndicated are messy)
