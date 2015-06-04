@@ -20,6 +20,14 @@ The data so far being exported for each post includes:
 * post word count (after HTML stripped out)
 * number of links in post (count of '</a>' tags)
 * list of hyperlink urls (from all href= tags)
+* number of tags
+* list of tags
+* number of comments (if it is a locally published post, syndicated are messy)
+
+Possible additions may include:
+* Embedded media? (count use of img, object, iframe, what else?)
+* names of commenters (would be just what they put in form)
+* filter results by keyword?? Or is that better done on the analysis side
 
 
 
