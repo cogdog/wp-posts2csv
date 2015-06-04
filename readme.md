@@ -18,8 +18,8 @@ The data so far being exported for each post includes:
 * blogname (host blog or remote if syndicated post)
 * post character count (string character count after HTML stripped out)
 * post word count (after HTML stripped out)
-* number of links in post (count of `&lt;/a&gt;` tags)
-* list of hyperlink urls (from all `&lt;a href=&gt;...&lt;\&gt;` tags)
+* number of links in post (count of `</a>` tags)
+* list of hyperlink urls (from all `<a href="http://*****.****.***">...</a>` tags)
 * number of tags
 * list of tags
 * number of comments (if it is a locally published post, syndicated are messy)
