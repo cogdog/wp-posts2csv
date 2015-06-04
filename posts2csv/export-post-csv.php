@@ -146,7 +146,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			if ( count ($got_posts) == 0 ) die ('Uh oh, no posts found for ' . $pretty_title);
 
 			// make labels for headers (first row)
-			$headers = ['ID' , 'Source',  'Post Title', 'URL',  'Publish Date', 'Author Name', 'Author User Name', 'Blog Name', 'Character Count', 'Word Count', 'Link Count', 'Links'];
+			$headers = ['ID' , 'Source',  'Post Title', 'URL',  'Publish Date', 'Author Name', 'Author User Name', 'Blog Name', 'Character Count', 'Word Count', 'Link Count', 'Links', 'Tag Count', 'Tags', 'Comment Count'];
 
 			// add headers
 			$blog_data[] = $headers;
@@ -179,6 +179,28 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 					//local post user blog name
 					$blog_name =  get_bloginfo( 'name' );
 				}
+				
+				// get comment counts for local posts (cant get syndicated count w/o proces intensive request				
+				$comments_count = ( $blog_source == 'local' ) ? wp_count_comments($post->ID)->approved : '';
+				
+				// get tags for this post
+				$post_tags = get_the_tags( $post->ID );
+								
+				// creating a holding bin
+				$tag_bin = array();
+				
+				// collect them tags, if they exist
+				if ( $post_tags ) {
+					foreach( $post_tags as $ptag ) {
+						$tag_bin[] = $ptag->name;
+					}
+					$tag_count = count( $post_tags );
+					
+				} else {
+					$tag_count = 0;
+
+				}
+						
 
 				// data for each row
 				$row = [
@@ -193,7 +215,11 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 					strval( strlen( strip_tags( get_the_content() ) ) ),
 					strval( str_word_count( strip_tags( get_the_content() ) ) ),
 					strval( substr_count( get_the_content(), "</a>") ),
-					implode( ",", $this->getUrls( get_the_content() ) )
+					implode( ",", $this->getUrls( get_the_content() ) ),
+					strval($tag_count),
+					implode( ",", $tag_bin ),
+					strval($comments_count),
+					
 					];
 				$blog_data[] = $row;
 			}
