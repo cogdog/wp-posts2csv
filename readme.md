@@ -1,4 +1,13 @@
 # Export Posts to CSV
+** by [cog.dog](https://cog.dog)
+
+-----
+*If this kind of stuff has any value to you, please consider supporting me so I can do more!*
+
+[![Support me on Patreon](http://cogdog.github.io/images/badge-patreon.png)](https://patreon.com/cogdog) [![Support me on via PayPal](http://cogdog.github.io/images/badge-paypal.png)](https://paypal.me/cogdog)
+
+----- 
+
 
 Export data for all posts or a category of posts in CSV format with including author name, author user name, publication date, URL (local or remote if syndicated, identification of Feed Wordpress syndicated posts, character count, word count, and link count, and list of outward hypertext link
 
@@ -25,6 +34,7 @@ The data so far being exported for each post includes:
 * number of comments (if it is a locally published post, syndicated are messy)
 
 Possible additions may include:
+* restruct by date range (DONE)
 * Embedded media? (count use of img, object, iframe, what else?)
 * names of commenters (would be just what they put in form)
 * filter results by keyword?? Or is that better done on the analysis side
@@ -58,6 +68,9 @@ one day
 
 ### 0.1 
 * Just got it working!
+
+### 0.2
+* Adding date fields to use before, after, or bracket by date
 
 
 

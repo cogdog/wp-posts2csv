@@ -3,10 +3,10 @@
 Plugin Name: Export Post Data as CSV
 Plugin URI: https://github.com/cogdog/wp-posts2csv
 Description: Provides CSV download of basic post data, filtered by category, including identification of Feed Wordpress syndicated posts, character, word,  link count, and list of links
-Version: 0.1
+Version: 0.2
 License: GPLv2
 Author: Alan Levine
-Author URI: http://cogdog.info
+Author URI: https://cog.dog
 */
 
 defined( 'ABSPATH' ) or die( 'Plugin file cannot be accessed directly.' );
@@ -16,8 +16,14 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 	
 		public function __construct()
 		{
+		
+
+			
 			// add admin menu item
 			add_action( 'admin_menu',  array( &$this, 'export_post_data_add_page' ) );
+			
+			// add ascripts for date picker
+			add_action('admin_enqueue_scripts', array( &$this, 'add_date_picker') ); 
 			
 			// handle form action
 			add_action( 'admin_post_export_post_do_export',  array( &$this, 'export_post_generate_csv' ) );
@@ -28,6 +34,16 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			// add to a new menu item Dashboard under Tools
 			add_submenu_page( 'tools.php',  'Export Posts Data To CSV', 'Post CSV Export', 'manage_options', 'posts2csv', array( &$this, 'export_post_data_form' ) );
 		}
+		
+		
+		public function add_date_picker(){
+			//jQuery UI date picker file
+			wp_enqueue_script('jquery-ui-datepicker');
+			
+			//jQuery UI theme css file			
+			wp_enqueue_style( 'posts2csv-admin-ui-css','http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css',false,"1.9.0",false);
+		}		
+		
 		
 		public function export_post_data_form() {
 			// displays form for the tool
@@ -53,8 +69,22 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 				<p><label>Choose Category:<br />
 				<?php wp_dropdown_categories( 'show_option_all=All%20Posts&show_count=1&hierarchical=1' )?>
 				</label></p>
+				
+				
+				 <p><label>Restrict to posts after this date (optional):<br />
+            	 <input type="text" class="datepicker" name="afterdate" value=""/>
+        
+        		<p><label>Restrict to posts before this date (optional):<br />
+            	 <input type="text" class="datepicker" name="beforedate" value=""/>
+	 
+				<script>
+				jQuery(function() {
+					jQuery( ".datepicker" ).datepicker({
+						dateFormat : "mm/dd/yy"
+					});
+				});
+				</script> 
 
-	
 				<p class="submit">
 				<input type="submit" name="submit" class="button-primary" value="Export Blog Data" />
 				</p>
@@ -112,6 +142,48 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 				'post_type'        => 'post',
 				'post_status'      => 'publish',
 			);
+			
+			if ( isset( $_POST['beforedate'] ) or isset($_POST['afterdate']) ) {
+			
+				// build feedback string 
+				
+				$date_fb_str = ' for posts ';
+				
+				
+				// add date query 
+				if ( isset( $_POST['beforedate'] ) AND isset($_POST['afterdate']) )  {
+				
+				
+					$args['date_query'] = array(
+						array(
+							'after'     => $_POST['afterdate'],
+							'before'    => $_POST['beforedate'],
+						),
+					);
+					
+					$date_fb_str.= 'after ' . $_POST['afterdate'] . ' and before ' . $_POST['beforedate'];
+				
+				} elseif ( isset( $_POST['beforedate'] ) ) {
+				
+						$args['date_query'] = array(
+						array(
+							'before'    => $_POST['beforedate']
+						),
+					);
+					
+					$date_fb_str.= 'before ' . $_POST['beforedate'];
+					
+				} elseif  ( isset( $_POST['afterdate'] ) ) {		
+						$args['date_query'] = array(
+							array(
+								'after'    => $_POST['afterdate']
+						),
+					);
+				}
+				
+			} else {
+				$date_fb_str = '';
+			}
 
 
 			// category id comes from form (name=cat)
@@ -127,7 +199,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 				$file_name = sanitize_title( get_bloginfo( 'name') . ' blog data ' . get_the_category_by_ID( $cat_id )  . ' category');
 
 				// for feedback
-				$pretty_title = get_bloginfo( 'name') . ' blog data for ' . get_the_category_by_ID( $cat_id )  . ' category';
+				$pretty_title = get_bloginfo( 'name') . ' blog data for ' . get_the_category_by_ID( $cat_id )  . ' category' . $date_fb_str ;
 
 			} else {
 				// grab all dem posts, all categories
@@ -136,7 +208,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 				$file_name = sanitize_title( get_bloginfo( 'name' ) . ' blog data all posts' );
 
 				// just in case   for feedback
-				$pretty_title = get_bloginfo( 'name' ) . ' blog data for all posts';	
+				$pretty_title = get_bloginfo( 'name' ) . ' blog data for all posts' . $date_fb_str;	
 			}
 
 			// get them posts!
@@ -151,26 +223,26 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			// add headers
 			$blog_data[] = $headers;
 
-			foreach ( $got_posts as $post ) {
+			foreach ( $got_posts as $thispost ) {
 				// make like The Loop
-				setup_postdata( $post );
+				setup_postdata( $thispost );
 
 				// default meaning it comes from this blog
 				$blog_source = 'local';
 
 				// get link, remote if syndicated via Feed WordPress, otherwise use permalink
-				$permalink = get_post_meta( $post->ID, 'syndication_permalink', true ) ;
+				$permalink = get_post_meta( $thispost->ID, 'syndication_permalink', true ) ;
 
 				if ( $permalink ) {
 					// switch flag if we are syndicated stuff
 					$blog_source = 'syndicated';
 				} else {
 					//local post use permalink
-					$permalink =  get_permalink($post->ID);
+					$permalink =  get_permalink($thispost->ID);
 				}
 
 				// get source site, if syndicated
-				$blog_name = get_post_meta( $post->ID, 'syndication_source', true ) ;
+				$blog_name = get_post_meta( $thispost->ID, 'syndication_source', true ) ;
 
 				if ( $blog_name ) {
 					// switch flag if we are syndicated stuff (maybe we slipped through above?)
@@ -181,20 +253,20 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 				}
 				
 				// get comment counts for local posts (cant get syndicated count w/o proces intensive request				
-				$comments_count = ( $blog_source == 'local' ) ? wp_count_comments($post->ID)->approved : '';
+				$comments_count = ( $blog_source == 'local' ) ? wp_count_comments($thispost->ID)->approved : '';
 				
 				// get tags for this post
-				$post_tags = get_the_tags( $post->ID );
+				$thispost_tags = get_the_tags( $thispost->ID );
 								
 				// creating a holding bin
 				$tag_bin = array();
 				
 				// collect them tags, if they exist
-				if ( $post_tags ) {
-					foreach( $post_tags as $ptag ) {
+				if ( $thispost_tags ) {
+					foreach( $thispost_tags as $ptag ) {
 						$tag_bin[] = $ptag->name;
 					}
-					$tag_count = count( $post_tags );
+					$tag_count = count( $thispost_tags );
 					
 				} else {
 					$tag_count = 0;
@@ -202,20 +274,23 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 				}
 						
 
+				$post_content = $thispost->post_content;
+
+				
 				// data for each row
 				$row = [
-					strval($post->ID),
+					strval($thispost->ID),
 					$blog_source,
-					get_the_title($post->ID),
+					get_the_title($thispost->ID),
 					$permalink,
-					get_the_time('M d, Y h:i:sa', $post->ID ),
+					get_the_time('M d, Y h:i:sa', $thispost->ID ),
 					get_the_author_meta( 'first_name' ) . ' ' . get_the_author_meta( 'last_name' ),
 					get_the_author_meta( 'user_login' ),
 					$blog_name,
-					strval( strlen( strip_tags( get_the_content() ) ) ),
-					strval( str_word_count( strip_tags( get_the_content() ) ) ),
-					strval( substr_count( get_the_content(), "</a>") ),
-					implode( ",", $this->getUrls( get_the_content() ) ),
+					strval( strlen( strip_tags( $post_content ) ) ),
+					strval( str_word_count( strip_tags( $post_content ) ) ),
+					strval( substr_count( $post_content, "</a>") ),
+					implode( ",", $this->getUrls( $post_content ) ),
 					strval($tag_count),
 					implode( ",", $tag_bin ),
 					strval($comments_count),
@@ -233,7 +308,8 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			header("Expires: 0"); // Proxies
 
 			// here comes the data
-			$this->outputCSV( $blog_data );			
+			$this->outputCSV( $blog_data );		
+			
 		}
 		
 		
