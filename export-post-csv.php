@@ -3,7 +3,7 @@
 Plugin Name: Export Post Data as CSV
 Plugin URI: https://github.com/cogdog/wp-posts2csv
 Description: Provides CSV download of basic post data, filtered by category, including identification of Feed Wordpress syndicated posts, character, word,  link count, and list of links
-Version: 0.2
+Version: 0.21
 License: GPLv2
 Author: Alan Levine
 Author URI: https://cog.dog
@@ -33,8 +33,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 		public function export_post_data_add_page() {
 			// add to a new menu item Dashboard under Tools
 			add_submenu_page( 'tools.php',  'Export Posts Data To CSV', 'Post CSV Export', 'manage_options', 'posts2csv', array( &$this, 'export_post_data_form' ) );
-		}
-		
+		}		
 		
 		public function add_date_picker(){
 			//jQuery UI date picker file
@@ -56,27 +55,49 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			<?php wp_nonce_field( 'posts2csv' ); ?>
 			
 				<h2>Export Post Data Options</h2>
-				<?php
-				 if ( isset( $_POST['cat'] )) {
-				?>
-   				<div id='message' class='updated fade'><p><strong>Posts successfully exported as CSV!</strong></p></div>
-				<?php
-  				}
-				?>
+
 
 				<p>Generate a CSV download data for all posts, or just within a category, including title, author, date, source (local or syndicated if Feed Wordpress is used), character, word, and link count, and all URLs for links including in the post.</p>
-	
-				<p><label>Choose Category:<br />
+								
+				
+				<table class="form-table">
+					<tbody>
+						<tr>
+							<th scope="row">
+								<label for="cat">Limit by Category</label>
+							</th>
+							
+							<td>
 				<?php wp_dropdown_categories( 'show_option_all=All%20Posts&show_count=1&hierarchical=1' )?>
-				</label></p>
 				
-				
-				 <p><label>Restrict to posts after this date (optional):<br />
-            	 <input type="text" class="datepicker" name="afterdate" value=""/>
-        
-        		<p><label>Restrict to posts before this date (optional):<br />
-            	 <input type="text" class="datepicker" name="beforedate" value=""/>
-	 
+							</td>
+						</tr>
+						
+						<tr>
+							<th scope="row">
+								<label for="afterdate">After Date</label>
+							</th>
+							
+							<td>
+								<input type="text" class="datepicker" name="afterdate" value=""/>
+								<p class="description">Restrict to posts <strong>after</strong> this date (optional)</p>
+							</td>
+						</tr>
+	
+							<tr>
+							<th scope="row">
+								<label for="afterdate">Before Date</label>
+							</th>
+							
+							<td>
+								<input type="text" class="datepicker" name="beforerdate" value=""/>
+								<p class="description">Restrict to  posts <strong>before</strong> this date  (optional)</p>
+							</td>
+						</tr>
+
+					</tbody>
+				</table>		
+					 
 				<script>
 				jQuery(function() {
 					jQuery( ".datepicker" ).datepicker({
@@ -215,7 +236,11 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			$got_posts = get_posts( $args ); 
 
 			// danger will robinson
-			if ( count ($got_posts) == 0 ) die ('Uh oh, no posts found for ' . $pretty_title);
+			if ( count ($got_posts) == 0 ) {
+				die ('Uh oh, no posts found for ' . $pretty_title);
+			} else {
+				echo count ($got_posts) . ' found and exported for' . $pretty_title;
+			}
 
 			// make labels for headers (first row)
 			$headers = ['ID' , 'Source',  'Post Title', 'URL',  'Publish Date', 'Author Name', 'Author User Name', 'Blog Name', 'Character Count', 'Word Count', 'Link Count', 'Links', 'Tag Count', 'Tags', 'Comment Count'];
