@@ -9,7 +9,9 @@
 ----- 
 
 
-Export data for all posts or a category of posts in CSV format with including author name, author user name, publication date, URL (local or remote if syndicated, identification of Feed Wordpress syndicated posts, character count, word count, and link count, and list of outward hypertext link
+Export data for all posts or a category of posts in CSV format with including author name, author user name, publication date, URL (local or remote if syndicated, identification of Feed Wordpress syndicated posts, character count, word count, and link count, and list of outward hypertext link.
+
+![](export-csv.jpg "Screenshot of options for plugin")
 
 ## Description
 Get blog data in a data format for use elsewhere. This plugin was written originally for use on sites that aggregate external posts with the [Feed Wordpress plugin](https://wordpress.org/plugins/feedwordpress/), but will equally return data on locally published posts (or mixes thereof)
@@ -39,12 +41,6 @@ Possible additions may include:
 * names of commenters (would be just what they put in form)
 * filter results by keyword?? Or is that better done on the analysis side
 
-
-
-## Please Note
-This is my first real plugin!
-
-
 ## Installation
 
 1. Upload `posts2csv` folder to the `/wp-content/plugins/` directory
@@ -60,9 +56,6 @@ This is my first real plugin!
 ok
 
 
-## Screenshots
- 
-one day 
 
 ## Changelog
 
@@ -72,6 +65,8 @@ one day
 ### 0.2
 * Adding date fields to use before, after, or bracket by date
 
+### 0.21
+* Fixed issues with date limits.
 
 
 
