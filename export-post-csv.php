@@ -68,7 +68,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 							</th>
 							
 							<td>
-				<?php wp_dropdown_categories( 'show_option_all=All%20Posts&show_count=1&hierarchical=1' )?>
+				<?php wp_dropdown_categories( 'show_option_all=All%20Posts&show_count=1&orderby=name&hierarchical=1' )?>
 				
 							</td>
 						</tr>
@@ -86,11 +86,11 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 	
 							<tr>
 							<th scope="row">
-								<label for="afterdate">Before Date</label>
+								<label for="beforedate">Before Date</label>
 							</th>
 							
 							<td>
-								<input type="text" class="datepicker" name="beforerdate" value=""/>
+								<input type="text" class="datepicker" name="beforedate" value=""/>
 								<p class="description">Restrict to  posts <strong>before</strong> this date  (optional)</p>
 							</td>
 						</tr>
@@ -168,21 +168,21 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			
 				// build feedback string 
 				
-				$date_fb_str = ' for posts ';
-				
-				
 				// add date query 
 				if ( isset( $_POST['beforedate'] ) AND isset($_POST['afterdate']) )  {
 				
 				
 					$args['date_query'] = array(
 						array(
-							'after'     => $_POST['afterdate'],
-							'before'    => $_POST['beforedate'],
+							'after'     => $_POST['afterdate']
 						),
+						array(
+							'before'     => $_POST['beforedate']
+						),
+					
 					);
 					
-					$date_fb_str.= 'after ' . $_POST['afterdate'] . ' and before ' . $_POST['beforedate'];
+					$date_fb_str= ' for posts after ' . $_POST['afterdate'] . ' and before ' . $_POST['beforedate'];
 				
 				} elseif ( isset( $_POST['beforedate'] ) ) {
 				
@@ -192,7 +192,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 						),
 					);
 					
-					$date_fb_str.= 'before ' . $_POST['beforedate'];
+					$date_fb_str.= ' for posts before ' . $_POST['beforedate'];
 					
 				} elseif  ( isset( $_POST['afterdate'] ) ) {		
 						$args['date_query'] = array(
@@ -200,6 +200,8 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 								'after'    => $_POST['afterdate']
 						),
 					);
+					
+					$date_fb_str.= ' for posts after ' . $_POST['afterdate'];
 				}
 				
 			} else {
@@ -238,10 +240,8 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			// danger will robinson
 			if ( count ($got_posts) == 0 ) {
 				die ('Uh oh, no posts found for ' . $pretty_title);
-			} else {
-				echo count ($got_posts) . ' found and exported for' . $pretty_title;
 			}
-
+			
 			// make labels for headers (first row)
 			$headers = ['ID' , 'Source',  'Post Title', 'URL',  'Publish Date', 'Author Name', 'Author User Name', 'Blog Name', 'Character Count', 'Word Count', 'Link Count', 'Links', 'Tag Count', 'Tags', 'Comment Count'];
 
