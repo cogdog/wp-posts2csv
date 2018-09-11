@@ -3,7 +3,7 @@
 Plugin Name: Export Post Data as CSV
 Plugin URI: https://github.com/cogdog/wp-posts2csv
 Description: Provides CSV download of basic post data, filtered by category, including identification of Feed Wordpress syndicated posts, character, word,  link count, and list of links
-Version: 0.3
+Version: 0.31
 License: GPLv2
 Author: Alan Levine
 Author URI: https://cog.dog
@@ -345,7 +345,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 					
 					// look for each key
 					foreach ( $postmeta as $key ) {
-						$value = get_post_meta( $thispost->ID, $key, true );			
+						$value = get_post_meta( $thispost->ID, trim( $key ), true );			
 						$metavalues[] = ( $value ) ?  $value : ' ';
 					}
 					// add to array

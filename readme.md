@@ -65,7 +65,7 @@ ok
 
 ## Changes
 
-### 0.3
+### 0.31
 * Via request by Aaron Davis, aded option to enter names of post meta keys to pull as column data
 
 
