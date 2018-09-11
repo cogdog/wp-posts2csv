@@ -35,8 +35,14 @@ The data so far being exported for each post includes:
 * list of tags
 * number of comments (if it is a locally published post, syndicated are messy)
 
-Possible additions may include:
-* restruct by date range (DONE)
+There is now a form field to list any post meta (custom field) names, each which will appear as a column in output
+
+
+![](post-meta-items.jpg "field for post meta")
+
+## Possible additions may include
+
+* restrict by date range (DONE)
 * Embedded media? (count use of img, object, iframe, what else?)
 * names of commenters (would be just what they put in form)
 * filter results by keyword?? Or is that better done on the analysis side
@@ -47,7 +53,7 @@ Possible additions may include:
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. Click on the Export to CSV  link from the Tools sub menu
 4. Save .csv value
-5. Enjoy
+5. Enjoy your data
 
 ## Frequently Asked Questions
 
@@ -57,26 +63,22 @@ ok
 
 
 
-## Changelog
+## Changes
 
-### 0.1 
-* Just got it working!
+### 0.3
+* Via request by Aaron Davis, aded option to enter names of post meta keys to pull as column data
 
-### 0.2
-* Adding date fields to use before, after, or bracket by date
 
 ### 0.21
 * Fixed issues with date limits.
 
 
+### 0.2
+* Adding date fields to use before, after, or bracket by date
 
 
-
-
-
-
-
-
+### 0.1 
+* Just got it working!
 
 
 

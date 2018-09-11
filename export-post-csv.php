@@ -3,7 +3,7 @@
 Plugin Name: Export Post Data as CSV
 Plugin URI: https://github.com/cogdog/wp-posts2csv
 Description: Provides CSV download of basic post data, filtered by category, including identification of Feed Wordpress syndicated posts, character, word,  link count, and list of links
-Version: 0.21
+Version: 0.3
 License: GPLv2
 Author: Alan Levine
 Author URI: https://cog.dog
@@ -84,14 +84,25 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 							</td>
 						</tr>
 	
-							<tr>
+						<tr>
 							<th scope="row">
-								<label for="beforedate">Before Date</label>
+								<label for="afterdate">Before Date</label>
 							</th>
 							
 							<td>
-								<input type="text" class="datepicker" name="beforedate" value=""/>
+								<input type="text" class="datepicker" name="beforerdate" value=""/>
 								<p class="description">Restrict to  posts <strong>before</strong> this date  (optional)</p>
+							</td>
+						</tr>
+
+						<tr>
+							<th scope="row">
+								<label for="cat">Post Meta Items</label>
+							</th>
+							
+							<td>
+							<input type="text"  name="metakey" value="" style="width:80%"/>
+							<p class="description">Include any custom field / post metadata key names to include as columns in output. Separate multiple items with commas.</p>
 							</td>
 						</tr>
 
@@ -168,21 +179,21 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			
 				// build feedback string 
 				
+				$date_fb_str = ' for posts ';
+				
+				
 				// add date query 
 				if ( isset( $_POST['beforedate'] ) AND isset($_POST['afterdate']) )  {
 				
 				
 					$args['date_query'] = array(
 						array(
-							'after'     => $_POST['afterdate']
+							'after'     => $_POST['afterdate'],
+							'before'    => $_POST['beforedate'],
 						),
-						array(
-							'before'     => $_POST['beforedate']
-						),
-					
 					);
 					
-					$date_fb_str= ' for posts after ' . $_POST['afterdate'] . ' and before ' . $_POST['beforedate'];
+					$date_fb_str.= 'after ' . $_POST['afterdate'] . ' and before ' . $_POST['beforedate'];
 				
 				} elseif ( isset( $_POST['beforedate'] ) ) {
 				
@@ -192,7 +203,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 						),
 					);
 					
-					$date_fb_str.= ' for posts before ' . $_POST['beforedate'];
+					$date_fb_str.= 'before ' . $_POST['beforedate'];
 					
 				} elseif  ( isset( $_POST['afterdate'] ) ) {		
 						$args['date_query'] = array(
@@ -200,13 +211,14 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 								'after'    => $_POST['afterdate']
 						),
 					);
-					
-					$date_fb_str.= ' for posts after ' . $_POST['afterdate'];
 				}
 				
 			} else {
 				$date_fb_str = '';
 			}
+			
+			// do we have post meta to find?
+			$postmeta = ( isset( $_POST['metakey'] ) ) ? explode( ',', $_POST['metakey'] ) : false;
 
 
 			// category id comes from form (name=cat)
@@ -244,6 +256,9 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			
 			// make labels for headers (first row)
 			$headers = ['ID' , 'Source',  'Post Title', 'URL',  'Publish Date', 'Author Name', 'Author User Name', 'Blog Name', 'Character Count', 'Word Count', 'Link Count', 'Links', 'Tag Count', 'Tags', 'Comment Count'];
+			
+			// add headers for post meta
+			if ( $postmeta ) $headers = array_merge( $headers, $postmeta);
 
 			// add headers
 			$blog_data[] = $headers;
@@ -303,6 +318,9 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 
 				
 				// data for each row
+				
+				
+				
 				$row = [
 					strval($thispost->ID),
 					$blog_source,
@@ -319,8 +337,21 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 					strval($tag_count),
 					implode( ",", $tag_bin ),
 					strval($comments_count),
-					
 					];
+					
+				if ( $postmeta ) {
+					// holder for values
+					$metavalues = array();
+					
+					// look for each key
+					foreach ( $postmeta as $key ) {
+						$value = get_post_meta( $thispost->ID, $key, true );			
+						$metavalues[] = ( $value ) ?  $value : ' ';
+					}
+					// add to array
+					$row = array_merge( $row, $metavalues);
+				
+				}
 				$blog_data[] = $row;
 			}
 
