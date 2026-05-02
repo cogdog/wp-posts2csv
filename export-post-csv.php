@@ -40,7 +40,7 @@ if ( ! class_exists( 'Posts2csv' ) ) {
 			wp_enqueue_script('jquery-ui-datepicker');
 			
 			//jQuery UI theme css file			
-			wp_enqueue_style( 'posts2csv-admin-ui-css','http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css',false,"1.9.0",false);
+			wp_enqueue_style( 'posts2csv-admin-ui-css','https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/base/jquery-ui.css',false,"1.9.0",false);
 		}		
 		
 		
